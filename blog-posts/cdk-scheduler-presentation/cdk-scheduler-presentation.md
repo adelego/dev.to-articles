@@ -24,9 +24,13 @@ This solution comes with two downsides : it's not very precise and expensive. A 
 
 ## DynamoDB TTL
 
-Utiliser les ttl - Limitations: ok mais niveau précision, c naze Schedule une lambda toute sles minutes
+DynamoDB comes with a time-to-live feature. You can add a property ttl attribute to an entry. At said time, AWS will remove the entry form your table. If you have a stream plugged to your table you can play an action at scheduled time.
 
-# Entrée fracassante de cdk-scheduler
+Although this approach reduces cost, it much less precise. AWS only guarantees a 48 hours precision on the time-to-live date. In effect, users observe a 10-minute delay but it's not a guarantee. If like us you work on time-sensitive events, you will need to avoid this practice.
+
+![Use Dynaomdb time-to-live feature to trigger events with one-day precision](./assets/naive-approach-ttl.jpg)
+
+# Introducing cdk-scheduler
 
 Comment ça marche : leverage SQS delay feature
 
