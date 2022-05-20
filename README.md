@@ -1,10 +1,9 @@
 # \<YOUR NAME\>'s blog source
 
-https://dev.to/\<YOUR DEV.TO NICKNAME\>
-
+https://dev.to/\adelegauvrit
 ## Blog posts
 
-- [\<BLOG POST NAME\>](https://dev.to/\<BLOG POST LINK\>)
+- [\<CDK-scheduler presentation\>](https://dev.to/\<BLOG POST LINK\>)
 
 ## Documentation
 
