@@ -22,7 +22,7 @@ A first approach is to use lambda schedule trigger feature. Lambdas can be trigg
 
 This solution comes with two downsides : it's not very precise and expensive. A lambda can be triggered down to every minute an d the trigger time has a one-minute precision guarantee. It's good enough for some use-cases but not all. You will also have to pay for execution time every minute. If you have chosen serverless to reduce compute cost, you will want to reduce that.
 
-## DynamoDB TTL
+## Using DynamoDB time-to-live and streams
 
 DynamoDB comes with a time-to-live feature. You can add a property ttl attribute to an entry. At said time, AWS will remove the entry form your table. If you have a stream plugged to your table you can play an action at scheduled time.
 
@@ -32,9 +32,15 @@ Although this approach reduces cost, it much less precise. AWS only guarantees a
 
 # Introducing cdk-scheduler
 
-Comment ça marche : leverage SQS delay feature
+To match our ambition to be both cheap and precise, we leveraged the SQS delay feature. When publishing on an SQS queue you can set a delay that can go up to 15 minutes.
 
-Schéma d'archi qui pue le style
+![cdk-scheduler leverages SQS delay feature to trigger events precisely](./assets/cdk-scheduler-architecture.jpg)
+
+Instead of starting a lambda every minute, we can do it every 15 minutes. This method has a 1-second precision gap!
+
+In case you're in hurry to schedule, we also added a "near-future" handler. This second lambda is plugged on a dynamoDB stream and handles events that are to be scheduled in less than fifteen minutes after their creation.
+
+Cost-wise, we divided our bill by (almost) 15 compared to the first option.
 
 # Next steps
 
