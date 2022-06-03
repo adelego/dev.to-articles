@@ -1,9 +1,10 @@
-# \<YOUR NAME\>'s blog source
+# Adèle's blog source
 
 https://dev.to/\adelegauvrit
+
 ## Blog posts
 
-- [\<CDK-scheduler presentation\>](https://dev.to/\<BLOG POST LINK\>)
+- [\CDK-scheduler presentation\](https://dev.to/\<BLOG POST LINK\>)
 
 ## Documentation
 
