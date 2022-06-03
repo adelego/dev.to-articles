@@ -16,5 +16,6 @@
     "dev-to-git": "1.4.9",
     "embedme": "1.22.0",
     "prettier": "2.6.1"
-  }
+  },
+  "packageManager": "yarn@1.22.18"
 }
