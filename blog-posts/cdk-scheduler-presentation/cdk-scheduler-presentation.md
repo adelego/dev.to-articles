@@ -8,14 +8,15 @@ series:
 canonical_url:
 ---
 
-# A serverless solution to precise scheduling
+# A serverless solution to just-in-time scheduling
 
 TLDR; We published a CDK construct to schedule events precisely.
 Documentation is available on [the project's github](https://github.com/guiyom-e/cdk-scheduler)
 
-When I worked on a serverless CMS with Guillaume, we had to find a way to schedule an event (publishing a new article) at a precise time with serverless tools.
+When I worked on a serverless CMS with Guillaume, we had to find a way to schedule an event (publishing a new article)
+at a precise time with serverless tools.
 AWS doesn't offer a built-in service to do so.
-We found straight-forward options but none are cost-effective and precise.
+We found straight-forward options but none as precise as we wished.
 We came up with a solution of our own.
 We published a CDK construct for you to add our solution to your stack without boilerplate.
 
@@ -30,10 +31,8 @@ If so, run the action you planned (like publishing an article), else do nothing.
 
 ![Trigger a lambda every minute to check if any events needs to be scheduled](./assets/naive-approach-lambda.jpg)
 
-This solution comes with two downsides: it's not very precise and expensive.
-A lambda can be triggered down to every minute an d the trigger time has a one-minute precision guarantee.
+A lambda can be triggered down to every minute and the trigger time has a one-minute precision guarantee.
 It's good enough for some use-cases but not all.
-You will also have to pay for execution time every minute. If you have chosen serverless to reduce compute cost, you will want to reduce that.
 
 ### Using DynamoDB time-to-live and streams
 
@@ -42,16 +41,16 @@ You can add a property ttl attribute to an entry.
 At said time, AWS will remove the entry form your table.
 If you have a stream plugged to your table you can play an action at scheduled time.
 
-Although this approach reduces cost, it much less precise.
+Although this approach is even less precise than the first.
 AWS only guarantees a 48 hours precision on the time-to-live date.
 In effect, users observe a 10-minute delay but it's not a guarantee.
-If like us you work on time-sensitive events, you will need to avoid this practice.
+If like us, you work on time-sensitive events, you will want to avoid this.
 
 ![Use Dynaomdb time-to-live feature to trigger events with one-day precision](./assets/naive-approach-ttl.jpg)
 
-# Introducing cdk-scheduler
+## Introducing cdk-scheduler
 
-To match our ambition to be both cheap and precise, we leveraged the SQS delay feature.
+To match our just-in-time ambition, we leveraged the SQS delay feature.
 When publishing on an SQS queue you can set a delay that can go up to 15 minutes.
 
 ![cdk-scheduler leverages SQS delay feature to trigger events precisely](./assets/cdk-scheduler-architecture.jpg)
@@ -62,12 +61,25 @@ This method has a 1-second precision gap!
 In case you're in hurry to schedule, we also added a "near-future" handler.
 This second lambda is plugged on a dynamoDB stream and handles events that are to be scheduled in less than fifteen minutes after their creation.
 
-Cost-wise, we divided our bill by (almost) 15 compared to the first option.
+### Pricing
+
+CDK-scheduler reduces are low.
+Fixed costs for lambda execution is $0.06/month.
+Regarding variable costs, CDK-scheduler costs $2.50 for 1 million scheduled events
+($1.25 to put your items in DynamoDB and $1.25 to delete them).
+
+### Comparison
+
+| Solution               | Fixed costs (per month) | Variable costs (1 million events) | Precision |
+| ---------------------- | ----------------------- | --------------------------------- | --------- |
+| **CDK-schedluer**      | $0.05                   | 2.50                              | 1 second  |
+| Scheduled lambda       | $0.80                   | $0                                | 2 minutes |
+| DynamoDB Time to leave | $0                      | 2.50                              | 1 day     |
 
 ## What's next?
 
-Our construct is now published.
+Our construct is now published. If you would like to try it on your project run `yarn add cdk-scheduler`.
 It fits the need we had when we developed a CMS like a glove.
-We're now looking for your feedback?
+We're now looking for your feedback.
 What do you need when scheduling an event?
 What configuration or features would you like to see?
