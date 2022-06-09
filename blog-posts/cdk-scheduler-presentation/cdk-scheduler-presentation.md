@@ -51,15 +51,16 @@ If, like us, you work on time-sensitive events, you will want to avoid this meth
 ## Introducing cdk-scheduler
 
 To match our just-in-time ambition, we leveraged the SQS delay feature.
-When publishing on an SQS queue you can set a delay that can go up to fifteen minutes.
+When publishing on an SQS queue you can set a delay that goes up to fifteen minutes.
 
 ![cdk-scheduler leverages SQS delay feature to trigger events precisely](./assets/cdk-scheduler-architecture.jpg)
 
-Instead of starting a lambda every minute, we can do it every fifteen minutes.
+Instead of starting a lambda every minute, we do it every fifteen minutes, which reduces fixed costs.
 This method has a **one-second precision gap**!
 
-In case you're in hurry to schedule, we also added a "near-future" handler.
-This second lambda is plugged on a DynamoDB stream and handles events that are to be scheduled in less than fifteen minutes after their creation.
+In case you're in hurry to schedule, we also added a "near-future" handler: a second lambda is plugged on a DynamoDB stream.
+It handles events that are to be scheduled in less than fifteen minutes after their creation and pushes them directly on the SQS with a delay.
+This edge case is just as precise.
 
 ### Pricing
 
